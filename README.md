@@ -31,7 +31,7 @@ provider "improvmx" {
 }
 
 resource "improvmx_domain" "example" {
-  domain = "example.com
+  domain = "example.com"
 }
 
 resource "improvmx_email_forward" "hello" {
