@@ -13,7 +13,7 @@ func resourceEmailForward() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceEmailForwardCreate,
 		Read:   resourceEmailForwardRead,
-		// Update: resourceEmailForwardUpdate,
+		Update: resourceEmailForwardUpdate,
 		Delete: resourceEmailForwardDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceEmailForwardImport,
@@ -23,19 +23,16 @@ func resourceEmailForward() *schema.Resource {
 			"domain": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 
 			"alias_name": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 
 			"destination_email": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
 		},
 	}
@@ -57,6 +54,13 @@ func resourceEmailForwardRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("destination_email", resp.Alias.Forward)
 
 	return nil
+}
+
+func resourceEmailForwardUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*improvmxApi.Client)
+	client.UpdateEmailForward(d.Get("domain").(string), d.Get("alias_name").(string), d.Get("destination_email").(string))
+
+	return resourceEmailForwardRead(d, meta)
 }
 
 func resourceEmailForwardDelete(d *schema.ResourceData, meta interface{}) error {
