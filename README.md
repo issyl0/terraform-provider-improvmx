@@ -1,6 +1,6 @@
 # terraform-provider-improvmx
 
-A Terraform provider for configuring [ImprovMX](https://improvmx.com) email forwards. Uses my [ImprovMX Golang API client](https://github.com/issyl0/go-improvmx).
+A very nascent Terraform provider for configuring [ImprovMX](https://improvmx.com) email forwards. Uses my [ImprovMX Golang API client](https://github.com/issyl0/go-improvmx). Download from the [Terraform Registry](https://registry.terraform.io/providers/issyl0/improvmx/latest).
 
 ## Features
 
@@ -20,6 +20,7 @@ terraform {
   required_providers {
     improvmx = {
       source  = "issyl0/improvmx"
+      version = "0.1.0"
     }
   }
 }
