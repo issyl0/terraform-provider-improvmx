@@ -1,8 +1,10 @@
 package improvmx
 
 import (
+	"log"
+	"time"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	improvmxApi "github.com/issyl0/go-improvmx"
 )
 
 func resourceDomain() *schema.Resource {
@@ -33,34 +35,75 @@ func resourceDomain() *schema.Resource {
 }
 
 func resourceDomainCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*improvmxApi.Client)
-	client.CreateDomain(d.Get("domain").(string), d.Get("notification_email").(string), d.Get("whitelabel").(string))
+	m := meta.(*Meta)
 
-	return resourceDomainRead(d, meta)
+	for {
+		resp := m.Client.CreateDomain(d.Get("domain").(string), d.Get("notification_email").(string), d.Get("whitelabel").(string))
+
+		log.Printf("[DEBUG] Got status code %v from ImprovMX API on Create for domain %s, success: %v, errors: %v.", resp.Code, d.Get("domain").(string), resp.Success, resp.Errors)
+
+		if resp.Code == 429 {
+			log.Printf("[DEBUG] Sleeping for 10 seconds to allow rate limit to recover.")
+			time.Sleep(10 * time.Second)
+		}
+
+		if resp.Success {
+			return resourceDomainRead(d, meta)
+		}
+	}
 }
 
 func resourceDomainRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*improvmxApi.Client)
-	resp := client.GetDomain(d.Get("domain").(string))
+	m := meta.(*Meta)
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
 
-	d.SetId(resp.Domain.Domain)
-	d.Set("domain", resp.Domain.Domain)
-	d.Set("notification_email", resp.Domain.NotificationEmail)
-	d.Set("whitelabel", resp.Domain.Whitelabel)
+	for {
+		resp := m.Client.GetDomain(d.Get("domain").(string))
 
-	return nil
+		log.Printf("[DEBUG] Got status code %v from ImprovMX API on Read for domain %s, success: %v, errors: %v.", resp.Code, d.Get("domain").(string), resp.Success, resp.Errors)
+
+		if resp.Code == 429 {
+			log.Printf("[DEBUG] Sleeping for 10 seconds to allow rate limit to recover.")
+			time.Sleep(10 * time.Second)
+		}
+
+		if resp.Success {
+			d.SetId(resp.Domain.Domain)
+			d.Set("domain", resp.Domain.Domain)
+			d.Set("notification_email", resp.Domain.NotificationEmail)
+			d.Set("whitelabel", resp.Domain.Whitelabel)
+
+			return nil
+		}
+	}
 }
 
 func resourceDomainUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*improvmxApi.Client)
-	client.UpdateDomain(d.Get("domain").(string), d.Get("notification_email").(string), d.Get("whitelabel").(string))
+	m := meta.(*Meta)
 
-	return resourceDomainRead(d, meta)
+	for {
+		resp := m.Client.UpdateDomain(d.Get("domain").(string), d.Get("notification_email").(string), d.Get("whitelabel").(string))
+
+		log.Printf("[DEBUG] Got status code %v from ImprovMX API on Update for domain %s, success: %v, errors: %v.", resp.Code, d.Get("domain").(string), resp.Success, resp.Errors)
+
+		if resp.Code == 429 {
+			log.Printf("[DEBUG] Sleeping for 10 seconds to allow rate limit to recover.")
+			time.Sleep(10 * time.Second)
+		}
+
+		if resp.Success {
+			return resourceDomainRead(d, meta)
+		}
+	}
 }
 
 func resourceDomainDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*improvmxApi.Client)
-	client.DeleteDomain(d.Get("domain").(string))
+	m := meta.(*Meta)
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
+
+	m.Client.DeleteDomain(d.Get("domain").(string))
 
 	return nil
 }

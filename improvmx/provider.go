@@ -1,9 +1,17 @@
 package improvmx
 
 import (
+	"sync"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	improvmxApi "github.com/issyl0/go-improvmx"
 )
+
+type Meta struct {
+	Resource *schema.ResourceData
+	Client   *improvmxApi.Client
+	Mutex    sync.Mutex
+}
 
 func Provider() *schema.Provider {
 	p := &schema.Provider{
@@ -19,6 +27,11 @@ func Provider() *schema.Provider {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	token := d.Get("token").(string)
-	return improvmxApi.NewClient(token), nil
+	m := &Meta{
+		Resource: d,
+		Client:   improvmxApi.NewClient(d.Get("token").(string)),
+		Mutex:    sync.Mutex{},
+	}
+
+	return m, nil
 }
