@@ -2,8 +2,6 @@
 
 A Terraform provider for configuring [ImprovMX](https://improvmx.com) email forwards. Uses my [ImprovMX Golang API client](https://github.com/issyl0/go-improvmx).
 
-**WARNING: DO NOT USE THIS IN PRODUCTION YET. THERE ARE SOME BIG BUGS AND THIS CRASHES A LOT.**
-
 ## Features
 
 - Create a domain (ImprovMX creates a wildcard forward for a domain by default).
