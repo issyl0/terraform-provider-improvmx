@@ -12,6 +12,7 @@ A very nascent Terraform provider for configuring [ImprovMX](https://improvmx.co
 - Delete an email forward.
 - Import an email forward.
 - Update an email forward (ImprovMX allows updating an email forward to send to more than one address, ie `alice@example.com,bob@example.com`).
+- Create, update and delete a domain's SMTP credentials.
 
 ## Usage
 
@@ -19,7 +20,7 @@ A very nascent Terraform provider for configuring [ImprovMX](https://improvmx.co
 terraform {
   required_providers {
     improvmx = {
-      source  = "issyl0/improvmx"
+      source = "issyl0/improvmx"
     }
   }
 }
