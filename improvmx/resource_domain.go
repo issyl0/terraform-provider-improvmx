@@ -1,6 +1,7 @@
 package improvmx
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -47,6 +48,11 @@ func resourceDomainCreate(d *schema.ResourceData, meta interface{}) error {
 			time.Sleep(10 * time.Second)
 		}
 
+		if resp.Code == 404 {
+			log.Printf("[DEBUG] Couldn't find the resource in ImprovMX. Aborting")
+			return fmt.Errorf("HTTP response code %d, error text: %s", resp.Code, resp.Errors.Domain)
+		}
+
 		if resp.Success {
 			return resourceDomainRead(d, meta)
 		}
@@ -66,6 +72,11 @@ func resourceDomainRead(d *schema.ResourceData, meta interface{}) error {
 		if resp.Code == 429 {
 			log.Printf("[DEBUG] Sleeping for 10 seconds to allow rate limit to recover.")
 			time.Sleep(10 * time.Second)
+		}
+
+		if resp.Code == 404 {
+			log.Printf("[DEBUG] Couldn't find the resource in ImprovMX. Aborting")
+			return fmt.Errorf("HTTP response code %d, error text: %s", resp.Code, resp.Errors.Domain)
 		}
 
 		if resp.Success {
@@ -90,6 +101,11 @@ func resourceDomainUpdate(d *schema.ResourceData, meta interface{}) error {
 		if resp.Code == 429 {
 			log.Printf("[DEBUG] Sleeping for 10 seconds to allow rate limit to recover.")
 			time.Sleep(10 * time.Second)
+		}
+
+		if resp.Code == 404 {
+			log.Printf("[DEBUG] Couldn't find the resource in ImprovMX. Aborting")
+			return fmt.Errorf("HTTP response code %d, error text: %s", resp.Code, resp.Errors.Domain)
 		}
 
 		if resp.Success {
