@@ -5,7 +5,7 @@ A resource to create ImprovMX domain SMTP credentials.
 ## Example Usage
 
 ```hcl
-resource "improvmx_email_forward" "example" {
+resource "improvmx_smtp_credential" "example" {
   domain   = "example.com"
   username = "example"
   password = var.password
@@ -16,4 +16,4 @@ resource "improvmx_email_forward" "example" {
 
 * `domain` - (Required) Name of the domain.
 * `username` - (Required) Username of the SMTP sender.
-* `password` - (Required) Password for the SMTP sending account.
+* `password` - (Required) Password for the SMTP sending account. (Will always be hidden in `plan`.)

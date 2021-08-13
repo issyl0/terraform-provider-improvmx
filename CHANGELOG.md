@@ -1,3 +1,7 @@
+# 0.4.2
+
+📜 Fixed the `improvmx_smtp_credential` resource docs to use the correct resource name.
+
 # 0.4.1
 
 📜 Added this file, a changelog for the versions.
