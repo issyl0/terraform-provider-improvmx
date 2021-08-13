@@ -119,6 +119,7 @@ func resourceEmailForwardImport(d *schema.ResourceData, meta interface{}) ([]*sc
 
 	d.SetId(parts[1])
 	d.Set("domain", parts[0])
+	d.Set("alias_name", parts[1])
 
 	resourceEmailForwardRead(d, meta)
 
