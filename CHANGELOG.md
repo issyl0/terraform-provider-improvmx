@@ -1,3 +1,7 @@
+# 0.5.0
+
+🚀 Support for checking that the required MX/SPF records are set. Thanks to @andreas-weber for the contribution! 🎉
+
 # 0.4.2
 
 📜 Fixed the `improvmx_smtp_credential` resource docs to use the correct resource name.
