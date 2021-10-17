@@ -16,6 +16,10 @@ func DataSourceDomainCheck() *schema.Resource {
 				Required: true,
 				Computed: false,
 			},
+			"records_are_valid": {
+				Type:     schema.TypeBool,
+				Computed: true,
+			},
 			"record_mx_is_valid": {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -78,6 +82,8 @@ func dataSourceDomainCheckRead(d *schema.ResourceData, meta interface{}) error {
 		log.Printf("[DEBUG] Request was not successful. Aborting.")
 		return fmt.Errorf("HTTP response code %d, error text: %s", response.Code, response.Error)
 	}
+
+	d.Set("records_are_valid", response.Records.Valid)
 
 	d.Set("record_mx_is_valid", response.Records.Mx.Valid)
 	d.Set("record_mx_expected_values", response.Records.Mx.Expected)
