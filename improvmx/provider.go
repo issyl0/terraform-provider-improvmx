@@ -27,7 +27,9 @@ func Provider() *schema.Provider {
 			"improvmx_email_forward":   resourceEmailForward(),
 			"improvmx_smtp_credential": resourceSMTPCredential(),
 		},
-		DataSourcesMap:     map[string]*schema.Resource{},
+		DataSourcesMap: map[string]*schema.Resource{
+			"improvmx_domain_check": DataSourceDomainCheck(),
+		},
 		ProviderMetaSchema: map[string]*schema.Schema{},
 	}
 
