@@ -1,0 +1,46 @@
+name: Real Provider Tests
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      IMPROVMX_API_TOKEN: ${{ secrets.IMPROVMX_TF_TEST }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+      - run: |
+          go mod download
+          go build .
+
+      - uses: hashicorp/setup-terraform@v1
+      - run: |
+          cat <<~EOF >> ~/.terraformrc
+            provider_installation {
+              dev_overrides {
+                "issyl0/improvmx" = "/home/runner/work/terraform-provider-improvmx/terraform-provider-improvmx"
+              }
+            }
+          ~EOF
+
+      - name: plan
+        run: terraform plan
+        working-directory: tests/acceptance/
+
+      - name: apply
+        run: terraform apply -auto-approve
+        working-directory: tests/acceptance/
+
+      - name: import
+        run: |
+          terraform state rm improvmx_domain.lychee
+          terraform import improvmx_domain.lychee lychee.systems
+        working-directory: tests/acceptance/
+
+      - name: destroy
+        run: terraform destroy -auto-approve
+        working-directory: tests/acceptance/
