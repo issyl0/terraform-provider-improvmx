@@ -37,5 +37,14 @@ resource "improvmx_email_forward" "hello" {
   domain            = "example.com"
   alias_name        = "hello"
   destination_email = "me@realdomain.com"
+  depends_on = [improvmx_domain.example]
 }
+
+resource "improvmx_email_forward" "wildcard" {
+  domain            = "example.com"
+  alias_name        = "*"
+  destination_email = "joe@realdomain.com"
+  depends_on = [improvmx_domain.example]
+}
+
 ```
