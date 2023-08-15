@@ -54,7 +54,13 @@ func resourceDomainCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		if resp.Success {
-			return resourceDomainRead(d, meta)
+			resp2 := m.Client.DeleteEmailForward(d.Get("domain").(string), "*")
+			if resp2.Success {
+				return resourceDomainRead(d, meta)
+			}else{
+				return fmt.Errorf("HTTP response code %d, Failed to delete initial wildcard", resp2.Code)
+			}
+		
 		}
 	}
 }
