@@ -41,6 +41,9 @@ func resourceEmailForward() *schema.Resource {
 
 func resourceEmailForwardCreate(d *schema.ResourceData, meta interface{}) error {
 	m := meta.(*Meta)
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
+
 	m.Client.CreateEmailForward(d.Get("domain").(string), d.Get("alias_name").(string), d.Get("destination_email").(string))
 
 	return resourceEmailForwardRead(d, meta)
@@ -78,6 +81,8 @@ func resourceEmailForwardRead(d *schema.ResourceData, meta interface{}) error {
 
 func resourceEmailForwardUpdate(d *schema.ResourceData, meta interface{}) error {
 	m := meta.(*Meta)
+	m.Mutex.Lock()
+	defer m.Mutex.Unlock()
 
 	for {
 		resp := m.Client.UpdateEmailForward(d.Get("domain").(string), d.Get("alias_name").(string), d.Get("destination_email").(string))
